@@ -1,0 +1,281 @@
+---
+title: "MY470 Computer Programming: The R Language"
+author: "Main contributors: Siân Brooke, Friedrich Geiecke"
+date: "Week 8 Lab: Example Answers"
+output: html_document
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+### Loop Exercises
+
+```python
+# Exercise 1: Create a list that contains all integers from 1 to 100 (inclusive), 
+# except that it has None for every integer that is divisible by 3 
+# Your list should look like: [1, 2, None, 4, 5, None, 7, 8, None, 10, ...]
+
+ls = []
+for i in range(1, 101):
+    if i % 3 == 0:
+        ls.append(None)
+    else:
+        ls.append(i)
+print(ls)
+```
+
+```{r}
+# Answer:
+
+ls <- rep(0)
+
+for (x in 1:100) {
+  if (x %% 3 == 0) {
+    ls[x] <- NA
+} else {
+    ls[x] <- x } 
+}
+print(ls)
+
+
+# With vectorization:
+
+x <- 1:100
+ls <- ifelse(x%%3==0, NA, x)
+print(ls)
+```
+
+```python
+# Exercise 2: Sum the even integers from the list below.
+
+lst = [1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33]
+
+summ = 0
+for i in lst:
+    if i % 2 == 0:
+        summ += i
+        
+print(summ)
+```
+
+```{r}
+# Answer:
+
+v1 <- c(1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33)
+
+summ <- 0
+for (x in v1) {
+  if (x %% 2 == 0) {
+    summ <- summ + x
+  }
+}
+
+print(summ)
+
+
+# With vectorization:
+
+summ <- sum(v1[v1 %% 2 == 0])
+print(summ)
+```
+
+
+### Function Exercises
+
+In Week 04, we looked at at defining our own functions. Translate the functions from the class exercises (below) into R.
+
+```python
+# Exercise 3
+
+def zero_list(alist):
+    """Takes a list and returns another list of the same length 
+    that looks like [0, 0, 0, ...].
+    """
+    newlist = [0]*len(alist)  
+    return newlist
+
+mylist = [1, 2, 3]
+
+zerolist = zero_list(mylist)  
+print(mylist)
+print(zerolist)
+```
+
+```{r}
+# Answer:
+
+# To read more about documenting functions in R see:
+# https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html
+
+#' Takes a vector and returns a new vector of the same length 
+#' that looks like 0, 0, 0, ....
+zero_vect <- function(a){
+  newvector <- integer(length(a))
+  return(newvector)
+}
+
+myvector <- c(1, 2, 3)
+
+zerovector <- zero_vect(myvector)  
+print(myvector) 
+print(zerovector)
+```
+
+```python
+# Exercise 4
+
+scientists = {'Alan Turing': 'mathematician', 'Richard Feynman': 'physicist',
+              'Marie Curie': 'chemist', 'Charles Darwin': 'biologist',
+              'Ada Lovelace': 'mathematician', 'Werner Heisenberg': 'physicist'}
+
+def print_professions(dic):
+    """Takes a dictionary of {Name: profession} and prints
+    'Name was a profession.'
+    """
+    for i in dic:
+        print(i + ' was a ' + dic[i] + '.')
+        
+print_professions(scientists)
+```
+
+```{r}
+# Answer:
+
+scientists <- list('mathematician', 'physicist', 'chemist', 
+                   'biologist', 'mathematician', 'physicist')
+
+names(scientists) <- c('Alan Turing', 'Richard Feynman', 'Marie Curie', 
+                       'Charles Darwin', 'Ada Lovelace', 'Werner Heisenberg')
+
+print_professions <- function(science){
+  for (x in names(science)) {
+    print(paste0(x, ' was a ', science[[x]], "."))
+  }}
+
+print_professions(scientists)
+
+# With vectorization
+paste(names(scientists), 'was a', scientists)
+```
+
+### Vectorizing Exercises
+
+Below we have the list comprehensions that we wrote in class in Week 3. For each Python snippet, create a chunk in R and translate the code into R.
+
+```python
+# Exercise 5: Create a new list containing the squares of the integers 
+# in the list below.
+
+lst = [1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33]
+ans = [i**2 for i in lst if type(i) == int] 
+```
+
+```{r}
+# Answer: In R, vectors can only contain vectors of one data type.
+# This means, to replicate the result, we instead look for
+# whole numbers (i.e. divisible by 1)
+
+lst <- c(1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33)
+ans <- lst[!lst%%1]^2
+ans
+```
+
+```python
+# Exercise 6: Using the function ifelse(), replicate the list comprehension below
+
+import numpy as np
+
+x = np.random.normal(0, 1, 100)
+y = ["Positive" if i > 0 else "Negative" for i in x]
+```
+
+```{r}
+# Answer:
+
+x <- rnorm(100)
+
+# ifelse(test, yes, no)
+y <- ifelse(x < 0, "Negative", "Positive")
+print(y)
+```
+
+```{r}
+# Exercise 7: Vectorize the code below. This is a bad loop with 'growing' data.
+
+# Set seed to compare the results
+set.seed(42)
+
+m <- 10
+n <- 10
+
+# Create matrix of normal random numbers
+# replicate(num_of_replications, expression to evaluate)
+# 10 x 10 normally distributed matrix
+mymat <- replicate(m, rnorm(n))
+
+# Transform into data frame
+mydframe <- data.frame(mymat)
+
+for (i in 1:m) {
+  for (j in 1:n) {
+    # For row, column, add some noise
+    mydframe[i,j] <- mydframe[i,j] + 10*sin(0.75*pi)
+  }
+}
+mydframe
+```
+
+```{r}
+# Answer:
+
+set.seed(42)
+m <- 10
+n<- 10
+
+mymat <- replicate(m, rnorm(n)) 
+mydframe <- data.frame(mymat)
+
+# Very simple
+mydframe <- mydframe + 10*sin(0.75*pi)
+mydframe
+``` 
+
+Using the sample data specified below, use `?` with `apply()` to complete the steps below:
+
+- Exercise 8: Create a column which is the mean of each row.
+- Exercise 9: Create a row which is the sum of each column.
+- Exercise 10: Create a function named `fun` that calculates the square of a number and convert the output to character if the character argument is set to `TRUE`.
+
+```{r}
+
+# Data frame
+sample.df <- data.frame(x = 1:4, y = 5:8, z = 10:13)
+
+# Answer to Exercise 8:
+sample.df$row_mean <- apply(sample.df, MARGIN=1, mean)
+
+# Answer to Exercise 9:
+sample.df <- rbind(sample.df, apply(sample.df, MARGIN=2, sum))
+print(sample.df)
+
+
+# Answer to Exercise 10:
+fun <- function(x, character=FALSE){
+  sqx <- x^2
+  if (character) {
+    return(as.character(sqx))
+  } else {
+    return(sqx)
+  }
+}
+
+# Check that it returns numeric
+num = fun(3.4)
+print(paste(num, class(num)))
+
+# Check that it returns character
+char = fun(3.4, character=TRUE)
+print(paste(char, class(char)))
+
+```

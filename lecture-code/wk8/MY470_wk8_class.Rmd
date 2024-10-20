@@ -1,0 +1,517 @@
+---
+title: "MY470 Computer Programming: The R Language"
+author: "Main contributors: Siân Brooke, Friedrich Geiecke"
+date: "Week 8 Lab"
+output: html_document
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+## R and Python
+
+R and Python are two languages that you will often hear talked about in Data Science. Both are open source (free to use and develop).
+
+**Python**
+
+- General purpose language
+- Object-oriented (relies on classes)
+- Great for data structures and programming in general, it has a vast collection of libraries that you can use - but they can be tricky to install 
+- Intuitive syntax and decent performance
+
+**R**
+
+- Oriented to statistical analysis and data processing on small scale 
+- Functional programming (uses functions)
+- It has a very huge collection of packages to do almost anything you might imagine with data (they are easy to install)
+- As a general programming language, it is much slower than Python and the syntax is arguably not as clear
+
+## Python to R
+
+There are many similarities between R and Python - but this can also be a common source of error.
+
+### Assignment and Arithmetic Operators
+
+Python
+``` python
+# Assignment
+a, b = 10, 20
+# Power
+a ** b
+# Remainder (Modulus)
+a % b
+```
+R
+``` R
+# Assignment
+a <- 10; b <- 20
+# Power
+a ^ b
+# Remainder (Modulus)
+a %% b
+```
+
+### Logical Operators
+
+An element-wise or simple logical operator will consider an entire object whereas a short-circuit operator stops as soon as it evaluates a test that produces a specified result. 
+
+For short circuit "and", no tests are evaluated after the first "false". 
+
+For short circuit "or", no tests are evaluated after the first "true".
+
+Python
+``` python
+# Short-circuit AND
+a and b
+# Short-circuit OR
+a or b
+# Element-wise AND
+a and b
+# Element-wise OR
+a or b
+```
+R
+``` R
+# Short-circuit AND
+a && b
+# Short-circuit OR
+a || b
+# Element-wise AND
+a & b
+# Element-wise OR
+a | b
+```
+
+### Sequences
+
+Python
+``` python
+# 1, 2, [...] 10
+range(1, 11)
+# List of numeric type
+x = [2, 3, 0, 6]
+# Updating at an index
+x[i] = 5
+```
+R
+``` R
+# 1, 2, [...] 10
+seq(10)
+1:10
+# List of numeric type
+x <- c(1, 2.0, 4, 5)
+# Updating at an index
+x[i] <- 5
+```
+
+### Concatinate 
+
+`c()` is a generic function that combines its arguments.
+
+By default it combines its arguments to form a vector.
+``` R
+c(1, 2, 3, 4, 5)
+```
+All arguments are coerced (forced) to a common type which is the type of the returned value. 
+``` R
+x <- c(1, 2, 3, "four")
+
+> print(x)
+# Output
+"1", "2", "3", "four"
+
+typeof(x)
+# Output
+"character"
+```
+
+All attributes (labeled values you can attach to an object) except names (labels) are removed.
+
+Note that numbers are stored as doubles (floats) by default in R. If you want to save a number as an integer, you need to use the suffix ```L```. This is shown below.
+
+``` R
+x <- c(1L, 2L, 3L)
+```
+
+## Indexing
+
+Let's say I'm working on a problem that involves a list of years:
+```
+1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
+```
+I save a list of these dates in the variable `dates_list`.
+
+- **Q1.** In Python, what date would I get if I ran ```dates_list[2]```
+
+- **Q2.** What would I get in R for ```dates_list[2]```?
+
+
+```{r}
+# Lists in R are similar to dictionaries in Python
+
+x <- c(1, 2, 3, 4, 5)
+
+num_list <- list(one = x,
+                 two = c("one", "two", "three"),
+                 three = matrix(data = 1:6, nrow = 3, ncol = 3))
+# NOTE: matrix() creates a matrix (table) from a given set of values
+
+print(num_list)
+```
+
+
+## Indexing
+
+```{r}
+# We can index a list with brackets
+print(num_list["two"])
+
+# We can also index specific elements with $
+print(num_list$two)
+
+# We can access data inside a list element by combining double and single brackets
+# By using the double brackets, the list structure is dropped
+print(num_list[["two"]])
+
+print(class(num_list["two"]))
+print(class(num_list[["two"]]))
+```
+
+It's easy to pull out specific entries in a vector using `[]`. For example:
+
+```{r}
+student_names <- c("Bill", "Jane", "Sarah", "Fred", "Paul")
+math_scores <- c(80, 75, 91, 67, 56)
+verbal_scores <- c(72, 90, 99, 60, 68)
+
+# Indexing
+math_scores[3]
+# Slicing (Inclusive)
+math_scores[1:3]
+# Remove by index
+math_scores[-(4:5)]
+# Filter by a condition
+math_scores[which(verbal_scores >= 90)]
+# Set a value
+math_scores[3] <- 92
+
+# Result
+math_scores
+```
+
+
+## Data Frames
+
+```{r}
+my_dataframe <- data.frame(title = c("Dr", "Prof", "Prof"),
+                         lname = c("Strangelove", "Moriarty", "Farnsworth"),
+                         favenum = c(13 , 99, 144))
+
+my_dataframe$fname <- c("", "James", "Hubert") 
+
+print(my_dataframe)
+```
+
+
+
+## Control Flow
+
+```{r}
+x <- 5
+y <- 10
+
+# Indentation is not strictly necessary, but preferred for readability 
+
+# The if code block is in rounded brackets
+if (x < y) {
+    print("x is smaller than y!")
+    # the else if code block is also in rounded brackets
+} else if (y < x) {
+    print("y is smaller than x!")
+} else {
+    print("no number is smaller")
+} # the code in the curly brackets will run if the conditional statement is true
+
+```
+
+```{r}
+# For and while loops work pretty much the same way.
+
+chr_vec <- c("this", "is", "how", "a", "for", "loop", "works")
+x <- 5
+
+# For loop
+for (txt in chr_vec){
+    print(txt)
+}
+
+# While loop
+while (x < 10){
+    print(x)
+    x <- x + 1
+}
+```
+
+```{r}
+# Similar to range() in python ...
+
+for (i in 1:length(chr_vec)) { # for i in range(0, len(chr_vec))
+    print(i)
+    print(chr_vec[i])
+}
+```
+
+## Functions
+
+
+```{r}
+# Functions also make use of different brackets
+
+# To read more about function documenantion in R, see:
+# https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html
+# https://cran.r-project.org/web/packages/docstring/vignettes/docstring_intro.html
+# https://josephcrispell.github.io/2021/07/26/creating-R-docstring.html
+
+#' Short title for function
+#'
+#' Longer description of the function
+class_fits <- function(num_teachers = 1, num_students, room_size) {
+    if (num_teachers + num_students < room_size) {
+        print("Hooray! The room is big enough")
+    } else {
+        print("Oh no, the room is too small") }
+    }
+
+# We can supply a value for each argument
+class_fits(2, 13, 18)
+
+# Or not, because we supplied a default for teachers
+class_fits(num_students = 18, room_size = 19)
+```
+
+### Pipe Operator
+
+```{r, warning=FALSE}
+library(tidyverse)
+
+# You might have noticed that your code in R often contains many parentheses. 
+# When you have complex code, this will often mean that you will have to nest
+# those parentheses together. This makes your R code hard to read and understand.
+# The pipe operator is for this exact purpose.
+
+x <- c(0.322, 0.237, 0.342, 0.983, 0.987 , 0.991, 0.129)
+
+# Compute the logarithm of x, compute the exponential function, round the result
+round(exp(log(x)), 1)
+
+# With pipe this is:
+x %>% log() %>%
+    exp() %>%
+    round(1)
+
+# NOTE: You don't need to include the brackets (i.e. log()) here,
+# but doing so increases the legibility of your code.
+```
+
+##  Recap: Terminology in R
+
+**Vector**
+- Sequence of data elements of the same basic type.
+- A vector is either logical, integer, double, complex, character, or raw and can have any attributes except a dimension attribute 
+- A **vectorised operation** refers to the ability to do a mathematical operation on a list -- or "vector" -- of numbers in a single step
+
+**Lists**
+- Closest in python is a dictionary
+- Has a name, value structure
+
+**Matrix**
+- Arranges data from a vector into a table
+- Data has to be the same type
+
+**Data Frame**
+- A matrix-like R object in which the columns can be different types (numeric, character, logical, etc.)
+
+**Factors**
+- Used to represent categorical data 
+- Can be ordered or unordered and are an important class for statistical analysis and for plotting
+
+
+## Exercises
+
+### Loop Exercises
+
+Below are the for-loops from class in Week 3. For each loop, create a chunk in R and translate the python code into R.
+
+``` python
+# Exercise 1: Create a list that contains all integers from 1 to 100 (inclusive), 
+# except that it has None for every integer that is divisible by 3 
+# Your list should look like: [1, 2, None, 4, 5, None, 7, 8, None, 10, ...]
+
+ls = []
+for i in range(1, 101):
+    if i % 3 == 0:
+        ls.append(None)
+    else:
+        ls.append(i)
+print(ls)
+```
+
+_Your cell here._
+
+```python
+# Exercise 2: Sum the even integers from the list below.
+
+lst = [1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33]
+
+summ = 0
+for i in lst:
+    if i % 2 == 0:
+        summ += i
+print(summ)
+```
+
+_Your cell here._
+
+### Function Exercises
+
+Translate the functions from the class exercises in Week 4 (below) into R.
+
+```python
+# Exercise 3
+
+def zero_list(alist):
+    """Takes a list and returns another list of the same length 
+    that looks like [0, 0, 0, ...].
+    """
+    newlist = [0]*len(alist)  
+    return newlist
+
+mylist = [1, 2, 3]
+
+zerolist = zero_list(mylist)  
+print(mylist)
+print(zerolist)
+```
+
+_Your cell here._
+
+```python
+# Exercise 4
+
+scientists = {'Alan Turing': 'mathematician', 'Richard Feynman': 'physicist',
+              'Marie Curie': 'chemist', 'Charles Darwin': 'biologist',
+              'Ada Lovelace': 'mathematician', 'Werner Heisenberg': 'physicist'}
+
+def print_professions(dic):
+    """Takes a dictionary of {Name: profession} and prints
+    'Name was a profession.'
+    """
+    for i in dic:
+        print(i + ' was a ' + dic[i] + '.')
+        
+print_professions(scientists)
+```
+
+_Your cell here._
+
+### Vectorizing Exercises
+
+Vectorizing is a efficient alternative to for-loops in R. Vectorization is the operation of converting repeated operations on simple numbers (“scalars”) into single operations on vectors or matrices. 
+
+As we covered earlier, a vector is the elementary data structure in R and is “a single entity consisting of a collection of things”.
+
+Like **list comprehensions** in Python, many of the above loop constructs can be made more efficient by using vectorization. At a lower level, the alternative vectorized form translates into code which will contain one or more loops in the lower-level language the former was implemented and compiled (Fortran, C, or C++ ). 
+
+**We can vectorize in Python too**, particularly through the `map()` function, which applies a given function to each item of a given iterable.
+
+Below we have the list comprehensions that we wrote in class in Week 3. For each Python snippet, create a chunk in R and translate the code into R.
+
+```python
+# Exercise 5: Create a new list containing the squares of the integers 
+# in the list below.
+
+lst = [1, 3, 2, 4.5, 7, 8, 10, 3, 5, 4, 7, 3.33]
+ans = [i**2 for i in lst if type(i) == int] 
+```
+_Your cell here._
+
+```python
+# Exercise 6: Using the function ifelse(), replicate the list comprehension below
+
+import numpy as np
+
+x = np.random.normal(0, 1, 100)
+y = ["Positive" if i > 0 else "Negative" for i in x]
+```
+_Your cell here._
+
+```{r}
+# Exercise 7: Vectorize the code below. This is a bad loop with 'growing' data.
+
+# Set seed to compare the results
+set.seed(42)
+
+m <- 10
+n <- 10
+
+# Create matrix of normal random numbers
+# replicate(num_of_replications, expression to evaluate)
+# 10 x 10 normally distributed matrix
+mymat <- replicate(m, rnorm(n))
+
+# Transform into data frame
+mydframe <- data.frame(mymat)
+
+for (i in 1:m) {
+  for (j in 1:n) {
+    # For row, column, add some noise
+    mydframe[i,j] <- mydframe[i,j] + 10*sin(0.75*pi)
+  }
+}
+mydframe
+```
+
+## Apply Functions
+
+The apply family functions in R are a well-known set of R functions that allows you to perform complex tasks over arrays, avoiding the use of for-loops. They run a loop in C (a lower level language), which means they are pretty quick. You can do this in several ways, depending on the value you specify to the MARGIN argument, that can be normally set to 1, 2 or c(1, 2). 
+
+The syntax of the apply command is:
+
+```r
+apply(X,       # Array, matrix or data frame
+      MARGIN,  # 1: columns, 2: rows, c(1, 2): rows and columns
+      FUN,     # Function to be applied
+      ...)     # Additional arguments to FUN
+```
+
+
+```{r}
+some_vector <- c(1, 2, 5)
+
+# User defined function
+my_function <- function(x) {
+  x + 5
+}
+
+# `sapply` applies a function to every element of a vector
+sapply(some_vector, my_function)
+
+# Anonymous function - does not require you to define a named function
+sapply(some_vector, function(y) y + 5)
+```
+
+### Apply Exercises
+
+Using the sample data specified below, use `?` with `apply()` to complete the steps below:
+
+- Exercise 8: Create a column which is the mean of each row.
+- Exercise 9: Create a row which is the sum of each column.
+- Exercise 10: Create a function named `fun` that calculates the square of a number and convert the output to character if the character argument is set to `TRUE`.
+
+```{r}
+
+# Data frame
+sample.df <- data.frame(x = 1:4, y = 5:8, z = 10:13)
+
+```
